@@ -21,17 +21,14 @@
     <section class="card" id="loginCard">
       <h1>Acesso do motorista</h1>
       <p class="muted">Versão 2: inspeção digital baseada na ficha final da Logfer. Nesta etapa os dados ainda ficam salvos no próprio aparelho. Depois conectamos ao Supabase.</p>
-      <label>Nome do motorista
-        <input id="driverName" placeholder="Ex.: João da Silva" autocomplete="name" />
+      <label>Motorista
+        <select id="driverName">
+          <option value="">Carregando motoristas...</option>
+        </select>
       </label>
       <label>CNH do motorista
-        <input id="driverCnh" placeholder="Somente números" inputmode="numeric" />
+        <input id="driverCnh" placeholder="CNH será preenchida automaticamente" inputmode="numeric" readonly />
       </label>
-      <div class="actions left">
-        <button id="startBtn">Iniciar inspeção</button>
-        <button id="openManagerHome" class="secondary">Painel do gestor</button>
-      </div>
-    </section>
 
     <section class="card hidden" id="inspectionCard">
       <div class="section-head">
