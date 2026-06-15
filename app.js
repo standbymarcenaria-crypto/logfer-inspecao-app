@@ -41,6 +41,88 @@ async function initSupabase(){
   }
 }
 
+async function carregarMotoristas(){
+
+  const { data, error } = await supabaseClient
+    .from('motoristas')
+    .select('*')
+    .eq('ativo', true)
+    .order('nome');
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  const select = document.getElementById('driverName');
+
+  select.innerHTML =
+    '<option value="">Selecione o motorista</option>';
+
+  data.forEach(m => {
+
+    const option = document.createElement('option');
+
+    option.value = m.nome;
+    option.textContent = m.nome;
+
+    option.dataset.cnh = m.cnh;
+
+    select.appendChild(option);
+  });
+
+  select.addEventListener('change', () => {
+
+    const selected =
+      select.options[select.selectedIndex];
+
+    document.getElementById('driverCnh').value =
+      selected.dataset.cnh || '';
+  });
+}
+
+async function carregarVeiculos(){
+
+  const { data, error } = await supabaseClient
+    .from('veiculos')
+    .select('*')
+    .eq('ativo', true)
+    .order('placa');
+
+  if(error){
+    console.error(error);
+    return;
+  }
+
+  const select = document.getElementById('plate');
+
+  select.innerHTML =
+    '<option value="">Selecione o veículo</option>';
+
+  data.forEach(v => {
+
+    const option = document.createElement('option');
+
+    option.value = v.placa;
+    option.textContent =
+      `${v.placa} - ${v.modelo}`;
+
+    option.dataset.tipo =
+      v.tipo_veiculo || '';
+
+    select.appendChild(option);
+  });
+
+  select.addEventListener('change', () => {
+
+    const selected =
+      select.options[select.selectedIndex];
+
+    document.getElementById('vehicleType').value =
+      selected.dataset.tipo || '';
+  });
+}
+
 function todayDefaults(){
   const now = new Date();
   $('inspectionDate').value = now.toISOString().slice(0,10);
@@ -335,4 +417,4 @@ window.addEventListener('beforeinstallprompt', (e) => {
 $('btnInstall').onclick = async () => { if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt = null; } };
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
-initSupabase(); renderChecklist(); setupSignature();
+await initSupabase(); renderChecklist(); setupSignature();
