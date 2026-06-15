@@ -167,13 +167,52 @@ async function collectPayload(isDraft=false){
 
 async function savePayload(payload){
   if(supabaseClient){
-    const header = {...payload};
-    delete header.items;
-    const {data, error} = await supabaseClient.from('inspections').insert(header).select().single();
+    const header = {
+      protocolo: payload.protocol,
+      motorista_nome: payload.driver_name,
+      motorista_cnh: payload.driver_cnh,
+      data_inspecao: payload.inspection_date,
+      horario_inspecao: payload.inspection_time,
+      hodometro: payload.odometer ? Number(payload.odometer) : null,
+      veiculo_placa: payload.plate,
+      tipo_veiculo: payload.vehicle_type,
+      rota: payload.route,
+      precisa_reparo: payload.needs_repair,
+      relato_motorista: payload.driver_report,
+      status: payload.status,
+      observacoes: payload.driver_report,
+      assinatura_motorista: payload.signature
+    };
+
+    const {data, error} = await supabaseClient
+      .from('inspecoes')
+      .insert(header)
+      .select()
+      .single();
+
     if(error) throw error;
-    const rows = payload.items.map(i => ({...i, inspection_id:data.id}));
-    const {error: itemError} = await supabaseClient.from('inspection_items').insert(rows);
-    if(itemError) throw itemError;
+
+    const rows = payload.items
+      .filter(i => i.answer === 'Não conforme')
+      .map(i => ({
+        inspecao_id: data.id,
+        item: String(i.item_id),
+        titulo_item: i.title,
+        grupo: i.group,
+        gravidade: i.severity,
+        observacao: i.observation,
+        resposta: i.answer,
+        foto_base64: i.photo,
+        status: 'ABERTA'
+      }));
+
+    if(rows.length){
+      const {error: itemError} = await supabaseClient
+        .from('nao_conformidades')
+        .insert(rows);
+
+      if(itemError) throw itemError;
+    }
   } else {
     const records = loadLocalRecords();
     records.unshift(payload);
