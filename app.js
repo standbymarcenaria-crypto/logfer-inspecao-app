@@ -391,24 +391,45 @@ function setupSignature(){
 
 function getSignatureData(){ return $('signature').toDataURL('image/png'); }
 
-$('startBtn').onclick = () => { todayDefaults(); show('inspectionCard'); };
-$('saveDraft').onclick = async () => {
-  try{ const payload = await collectPayload(true); await savePayload(payload); alert('Rascunho salvo neste aparelho.'); }
-  catch(err){ alert(err.message); }
+if($('startBtn')) $('startBtn').onclick = () => { todayDefaults(); show('inspectionCard'); };
+
+if($('saveDraft')) $('saveDraft').onclick = async () => {
+  try{
+    const payload = await collectPayload(true);
+    await savePayload(payload);
+    alert('Rascunho salvo.');
+  } catch(err){
+    alert(err.message);
+  }
 };
-$('submitInspection').onclick = async () => {
+
+if($('submitInspection')) $('submitInspection').onclick = async () => {
   try{
     const payload = await collectPayload(false);
     await savePayload(payload);
-    $('protocolText').textContent = `Protocolo: ${payload.protocol} | Status: ${payload.status}`;
+    if($('protocolText')) $('protocolText').textContent = `Protocolo: ${payload.protocol} | Status: ${payload.status}`;
     show('successCard');
-  }catch(err){ alert(err.message); }
+  } catch(err){
+    alert(err.message);
+  }
 };
-$('newInspection').onclick = () => location.reload();
-if($('openManager')) $('openManager').onclick = () => { renderManager(); show('managerCard'); };
-if($('openManagerHome')) $('openManagerHome').onclick = () => { renderManager(); show('managerCard'); };
+
+if($('newInspection')) $('newInspection').onclick = () => location.reload();
+
+if($('openManager')) $('openManager').onclick = () => {
+  renderManager();
+  show('managerCard');
+};
+
+if($('openManagerHome')) $('openManagerHome').onclick = () => {
+  renderManager();
+  show('managerCard');
+};
+
 if($('backHome')) $('backHome').onclick = () => show('loginCard');
+
 if($('exportCsv')) $('exportCsv').onclick = exportCsv;
+
 if($('clearLocal')) $('clearLocal').onclick = () => {
   if(confirm('Apagar todas as inspeções de teste salvas neste aparelho?')){
     localStorage.removeItem('logfer_inspections');
@@ -417,11 +438,22 @@ if($('clearLocal')) $('clearLocal').onclick = () => {
 };
 
 window.addEventListener('beforeinstallprompt', (e) => {
-  e.preventDefault(); deferredPrompt = e; $('btnInstall').classList.remove('hidden');
+  e.preventDefault();
+  deferredPrompt = e;
+  if($('btnInstall')) $('btnInstall').classList.remove('hidden');
 });
-$('btnInstall').onclick = async () => { if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt = null; } };
 
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
+if($('btnInstall')) $('btnInstall').onclick = async () => {
+  if(deferredPrompt){
+    deferredPrompt.prompt();
+    deferredPrompt = null;
+  }
+};
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('service-worker.js');
+}
+
 initSupabase().then(() => {
   renderChecklist();
   setupSignature();
