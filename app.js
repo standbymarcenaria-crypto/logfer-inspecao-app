@@ -417,4 +417,7 @@ window.addEventListener('beforeinstallprompt', (e) => {
 $('btnInstall').onclick = async () => { if(deferredPrompt){ deferredPrompt.prompt(); deferredPrompt = null; } };
 
 if('serviceWorker' in navigator){ navigator.serviceWorker.register('service-worker.js'); }
-await initSupabase(); renderChecklist(); setupSignature();
+initSupabase().then(() => {
+  renderChecklist();
+  setupSignature();
+});
