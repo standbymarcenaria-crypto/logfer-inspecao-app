@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#f97316" />
+  <title>Logfer | Inspeção de Caminhões</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <strong>LOGFER</strong>
+      <span>Inspeção Semanal de Caminhões</span>
+    </div>
+    <button id="btnInstall" class="ghost hidden">Instalar</button>
+  </header>
+
+  <main class="container">
+    <section class="card" id="loginCard">
+      <h1>Acesso do motorista</h1>
+      <p class="muted">MVP inicial: acesso local. Depois conectamos ao Supabase com login real.</p>
+      <label>Nome do motorista
+        <input id="driverName" placeholder="Ex.: João da Silva" />
+      </label>
+      <label>CNH do motorista
+        <input id="driverCnh" placeholder="Somente números" inputmode="numeric" />
+      </label>
+      <button id="startBtn">Iniciar inspeção</button>
+    </section>
+
+    <section class="card hidden" id="inspectionCard">
+      <div class="section-head">
+        <h1>Nova inspeção</h1>
+        <span id="progressText">0%</span>
+      </div>
+
+      <div class="grid two">
+        <label>Data da inspeção
+          <input id="inspectionDate" type="date" />
+        </label>
+        <label>Horário
+          <input id="inspectionTime" type="time" />
+        </label>
+        <label>Odômetro de hoje
+          <input id="odometer" type="number" placeholder="Ex.: 125000" />
+        </label>
+        <label>Placa do veículo
+          <input id="plate" placeholder="Ex.: ABC1D23" />
+        </label>
+        <label>Tipo do veículo
+          <select id="vehicleType">
+            <option value="">Selecione</option>
+            <option>Van/Furgão</option>
+            <option>Baú</option>
+            <option>Sider</option>
+            <option>Carroceria</option>
+            <option>Veículo leve</option>
+          </select>
+        </label>
+      </div>
+
+      <h2>Itens a inspecionar</h2>
+      <p class="muted">Quando marcar “Não conforme”, a observação e foto serão exigidas nos itens críticos.</p>
+      <div id="checklist"></div>
+
+      <h2>Resultado geral</h2>
+      <label>O caminhão necessita melhoria, reparo, manutenção, equipamento ou vistoria?
+        <select id="needsRepair">
+          <option value="Não">Não</option>
+          <option value="Sim">Sim</option>
+        </select>
+      </label>
+      <label>Relato do motorista
+        <textarea id="driverReport" rows="4" placeholder="Descreva a necessidade, defeito ou observação relevante."></textarea>
+      </label>
+
+      <h2>Assinatura do motorista</h2>
+      <canvas id="signature" width="600" height="220"></canvas>
+      <button type="button" class="secondary" id="clearSignature">Limpar assinatura</button>
+
+      <div class="actions">
+        <button id="saveDraft" class="secondary">Salvar rascunho</button>
+        <button id="submitInspection">Enviar inspeção</button>
+      </div>
+    </section>
+
+    <section class="card hidden" id="successCard">
+      <h1>Inspeção registrada</h1>
+      <p id="protocolText"></p>
+      <button id="newInspection">Nova inspeção</button>
+      <button id="openManager" class="secondary">Abrir painel do gestor</button>
+    </section>
+
+    <section class="card hidden" id="managerCard">
+      <div class="section-head">
+        <h1>Painel do gestor</h1>
+        <button id="backHome" class="ghost">Voltar</button>
+      </div>
+      <div class="kpis">
+        <div><strong id="kpiTotal">0</strong><span>Total</span></div>
+        <div><strong id="kpiApproved">0</strong><span>Aprovadas</span></div>
+        <div><strong id="kpiRejected">0</strong><span>Com pendência</span></div>
+      </div>
+      <div id="records"></div>
+    </section>
+  </main>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
