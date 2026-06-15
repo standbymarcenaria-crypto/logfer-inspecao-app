@@ -405,11 +405,16 @@ $('submitInspection').onclick = async () => {
   }catch(err){ alert(err.message); }
 };
 $('newInspection').onclick = () => location.reload();
-$('openManager').onclick = () => { renderManager(); show('managerCard'); };
-$('openManagerHome').onclick = () => { renderManager(); show('managerCard'); };
-$('backHome').onclick = () => show('loginCard');
-$('exportCsv').onclick = exportCsv;
-$('clearLocal').onclick = () => { if(confirm('Apagar todas as inspeções de teste salvas neste aparelho?')){ localStorage.removeItem('logfer_inspections'); renderManager(); } };
+if($('openManager')) $('openManager').onclick = () => { renderManager(); show('managerCard'); };
+if($('openManagerHome')) $('openManagerHome').onclick = () => { renderManager(); show('managerCard'); };
+if($('backHome')) $('backHome').onclick = () => show('loginCard');
+if($('exportCsv')) $('exportCsv').onclick = exportCsv;
+if($('clearLocal')) $('clearLocal').onclick = () => {
+  if(confirm('Apagar todas as inspeções de teste salvas neste aparelho?')){
+    localStorage.removeItem('logfer_inspections');
+    renderManager();
+  }
+};
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault(); deferredPrompt = e; $('btnInstall').classList.remove('hidden');
