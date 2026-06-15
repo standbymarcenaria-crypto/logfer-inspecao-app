@@ -1,24 +1,24 @@
 const checklistItems = [
-  {id:1, title:'Freios estão OK?', critical:true},
-  {id:2, title:'Há algum vazamento aparente?', critical:true},
-  {id:3, title:'Pneus em bom estado, incluindo estepe, sulco mínimo de 3 mm, sem cortes ou carecas?', critical:true},
-  {id:4, title:'Kit de segurança: triângulo, extintor, 4 cones P, faixas refletivas, calços e martelo estão em bom estado?', critical:true},
-  {id:5, title:'Extintores carregados, em boas condições e dentro da validade?', critical:true},
-  {id:6, title:'Parte elétrica funcionando: faróis, lanternas, luz de freio, setas, luz de ré, pisca-alerta, buzina, limpador e alerta de ré?', critical:true},
-  {id:7, title:'Espelhos retrovisores e vidros em bom estado?', critical:true},
-  {id:9, title:'Cinto de segurança 3 pontas funcionando?', critical:true},
-  {id:10, title:'Nível do óleo lubrificante OK e vareta de verificação presente?', critical:true},
-  {id:11, title:'Nível do combustível OK?', critical:false},
-  {id:12, title:'Manutenções preventivas segundo manual do caminhão em dia?', critical:true},
-  {id:13, title:'Tacógrafo OK e com disco/fita para a semana?', critical:true, extra:'Data de validade do tacógrafo'},
-  {id:14, title:'Motorista possui EPIs indicados?', critical:true},
-  {id:15, title:'Emissões do escapamento em conformidade, sem fumaça visível?', critical:true},
-  {id:16, title:'Materiais de proteção de carga e equipamentos para descarga necessários disponíveis?', critical:true},
-  {id:17, title:'Portas e travas do baú/furgão funcionando?', critical:true},
-  {id:18, title:'Documentos do caminhão, histórico/relatório de viagem, planilhas de controle e vistoria disponíveis?', critical:true},
-  {id:19, title:'Caixa de ferramentas completa?', critical:false},
-  {id:20, title:'Higiene: caminhão limpo internamente e externamente?', critical:false},
-  {id:22, title:'Faróis de neblina OK, se houver?', critical:false}
+  {id:1, group:'Freios', title:'Freios estão OK?', critical:true, severity:'Crítica'},
+  {id:2, group:'Vazamentos', title:'Há algum vazamento aparente?', critical:true, severity:'Alta'},
+  {id:3, group:'Pneus', title:'Pneus em bom estado, incluindo estepe, sulco mínimo de 3 mm, sem cortes ou carecas?', critical:true, severity:'Crítica'},
+  {id:4, group:'Segurança', title:'Kit de segurança completo: triângulo, extintor, 4 cones P, faixas refletivas, calços e martelo?', critical:true, severity:'Alta'},
+  {id:5, group:'Segurança', title:'Extintores carregados, em boas condições e dentro da validade?', critical:true, severity:'Crítica', extra:'Data de validade do extintor'},
+  {id:6, group:'Elétrica', title:'Parte elétrica funcionando: faróis, lanternas, luz de freio, setas, luz de ré, pisca-alerta, buzina, limpador e alerta de ré?', critical:true, severity:'Crítica'},
+  {id:7, group:'Cabine', title:'Espelhos retrovisores e vidros em bom estado?', critical:true, severity:'Alta'},
+  {id:9, group:'Segurança', title:'Cinto de segurança 3 pontas funcionando?', critical:true, severity:'Crítica'},
+  {id:10, group:'Motor', title:'Nível do óleo lubrificante OK e vareta de verificação presente?', critical:true, severity:'Alta'},
+  {id:11, group:'Operação', title:'Nível do combustível OK?', critical:false, severity:'Baixa'},
+  {id:12, group:'Manutenção', title:'Manutenções preventivas segundo manual do caminhão em dia?', critical:true, severity:'Alta'},
+  {id:13, group:'Documentação/Controle', title:'Tacógrafo OK e com disco/fita para a semana?', critical:true, severity:'Crítica', extra:'Data de validade do tacógrafo'},
+  {id:14, group:'EPI', title:'Motorista possui os EPIs indicados?', critical:true, severity:'Alta', details:'Calçado de segurança e capacete de segurança.'},
+  {id:15, group:'Emissões', title:'Emissões do escapamento em conformidade, sem fumaça visível?', critical:true, severity:'Alta'},
+  {id:16, group:'Carga', title:'Materiais de proteção de carga e equipamentos para carga/descarga disponíveis?', critical:true, severity:'Alta'},
+  {id:17, group:'Baú/Furgão', title:'Portas e travas do baú/furgão funcionando?', critical:true, severity:'Alta'},
+  {id:18, group:'Documentação', title:'Documentos do caminhão, histórico/relatório de viagem, planilhas de controle e vistoria disponíveis?', critical:true, severity:'Alta'},
+  {id:19, group:'Ferramentas', title:'Caixa de ferramentas completa?', critical:false, severity:'Média', details:'2 alicates, martelo e demais itens definidos pela operação.'},
+  {id:20, group:'Higiene', title:'Caminhão limpo internamente e externamente?', critical:false, severity:'Baixa'},
+  {id:22, group:'Elétrica', title:'Faróis de neblina OK, se houver?', critical:false, severity:'Baixa'}
 ];
 
 const $ = (id) => document.getElementById(id);
@@ -42,19 +42,35 @@ function todayDefaults(){
 function renderChecklist(){
   const box = $('checklist');
   box.innerHTML = '';
+  let lastGroup = '';
   checklistItems.forEach(item => {
+    if(item.group !== lastGroup){
+      const g = document.createElement('h3');
+      g.className = 'group-title';
+      g.textContent = item.group;
+      box.appendChild(g);
+      lastGroup = item.group;
+    }
     const div = document.createElement('div');
     div.className = 'check-item';
     div.innerHTML = `
-      <div class="check-title">${item.id} - ${item.title} ${item.critical ? '<span class="badge rejected">crítico</span>' : ''}</div>
+      <div class="check-title">
+        <span>${item.id} - ${item.title}</span>
+        <div class="badges">
+          ${item.critical ? '<span class="badge rejected">crítico</span>' : '<span class="badge neutral">controle</span>'}
+          <span class="badge severity">${item.severity}</span>
+        </div>
+      </div>
+      ${item.details ? `<p class="muted small">${item.details}</p>` : ''}
       <div class="check-actions">
         <button type="button" class="option" data-id="${item.id}" data-answer="Conforme">Conforme</button>
         <button type="button" class="option" data-id="${item.id}" data-answer="Não conforme">Não conforme</button>
+        <button type="button" class="option" data-id="${item.id}" data-answer="Não se aplica">N/A</button>
       </div>
       <div class="nonconformity hidden" id="non_${item.id}">
         ${item.extra ? `<label>${item.extra}<input id="extra_${item.id}" type="date" /></label>` : ''}
-        <label>Observação ${item.critical ? '(obrigatória)' : ''}<textarea id="obs_${item.id}" rows="3"></textarea></label>
-        <label>Foto ${item.critical ? '(obrigatória)' : ''}<input id="photo_${item.id}" type="file" accept="image/*" capture="environment" /></label>
+        <label>Observação <strong>(obrigatória)</strong><textarea id="obs_${item.id}" rows="3"></textarea></label>
+        <label>Foto ${item.critical ? '<strong>(obrigatória)</strong>' : '(opcional)'}<input id="photo_${item.id}" type="file" accept="image/*" capture="environment" /></label>
       </div>`;
     box.appendChild(div);
   });
@@ -65,8 +81,8 @@ function handleAnswer(e){
   const id = e.target.dataset.id;
   const answer = e.target.dataset.answer;
   answers[id] = answer;
-  document.querySelectorAll(`button[data-id="${id}"]`).forEach(b => b.classList.remove('active-ok','active-no'));
-  e.target.classList.add(answer === 'Conforme' ? 'active-ok' : 'active-no');
+  document.querySelectorAll(`button[data-id="${id}"]`).forEach(b => b.classList.remove('active-ok','active-no','active-na'));
+  e.target.classList.add(answer === 'Conforme' ? 'active-ok' : answer === 'Não conforme' ? 'active-no' : 'active-na');
   $('non_' + id).classList.toggle('hidden', answer !== 'Não conforme');
   updateProgress();
 }
@@ -83,7 +99,7 @@ function show(id){
 }
 
 async function fileToDataUrl(input){
-  const file = input.files && input.files[0];
+  const file = input && input.files && input.files[0];
   if(!file) return null;
   return await new Promise((resolve,reject)=>{
     const reader = new FileReader();
@@ -93,6 +109,13 @@ async function fileToDataUrl(input){
   });
 }
 
+function hasSignature(){
+  const canvas = $('signature');
+  const blank = document.createElement('canvas');
+  blank.width = canvas.width; blank.height = canvas.height;
+  return canvas.toDataURL() !== blank.toDataURL();
+}
+
 async function collectPayload(isDraft=false){
   const driverName = $('driverName').value.trim();
   const driverCnh = $('driverCnh').value.trim();
@@ -100,6 +123,7 @@ async function collectPayload(isDraft=false){
   if(!driverName || !driverCnh) throw new Error('Informe nome e CNH do motorista.');
   if(!plate) throw new Error('Informe a placa do veículo.');
   if(!isDraft && Object.keys(answers).length < checklistItems.length) throw new Error('Responda todos os itens do checklist.');
+  if(!isDraft && !hasSignature()) throw new Error('Assine a inspeção antes de enviar.');
 
   const items = [];
   for(const item of checklistItems){
@@ -107,18 +131,22 @@ async function collectPayload(isDraft=false){
     const obs = $('obs_' + item.id)?.value.trim() || '';
     const extra = $('extra_' + item.id)?.value || '';
     const photo = await fileToDataUrl($('photo_' + item.id));
-    if(!isDraft && answer === 'Não conforme' && item.critical && (!obs || !photo)){
-      throw new Error(`No item ${item.id}, informe observação e foto.`);
+    if(!isDraft && answer === 'Não conforme' && !obs){
+      throw new Error(`No item ${item.id}, informe a observação da não conformidade.`);
     }
-    items.push({item_id:item.id, title:item.title, critical:item.critical, answer, observation:obs, extra_date:extra, photo});
+    if(!isDraft && answer === 'Não conforme' && item.critical && !photo){
+      throw new Error(`No item ${item.id}, anexe uma foto da não conformidade crítica.`);
+    }
+    items.push({item_id:item.id, group:item.group, title:item.title, critical:item.critical, severity:item.severity, answer, observation:obs, extra_date:extra, photo});
   }
 
-  const hasNonConformity = items.some(i => i.answer === 'Não conforme');
+  const non = items.filter(i => i.answer === 'Não conforme');
+  const hasCritical = non.some(i => i.critical);
   const protocol = 'LOG-' + new Date().toISOString().replace(/[-:.TZ]/g,'').slice(0,14);
   return {
     protocol,
     created_at: new Date().toISOString(),
-    status: isDraft ? 'Rascunho' : (hasNonConformity ? 'Pendente de correção' : 'Aprovado'),
+    status: isDraft ? 'Rascunho' : (hasCritical ? 'Reprovado - item crítico' : non.length ? 'Pendente de correção' : 'Aprovado'),
     driver_name: driverName,
     driver_cnh: driverCnh,
     inspection_date: $('inspectionDate').value,
@@ -126,8 +154,12 @@ async function collectPayload(isDraft=false){
     odometer: $('odometer').value,
     plate,
     vehicle_type: $('vehicleType').value,
+    route: $('route').value.trim(),
     needs_repair: $('needsRepair').value,
     driver_report: $('driverReport').value.trim(),
+    manager_status: 'Aguardando análise',
+    manager_action: '',
+    release_date: '',
     signature: getSignatureData(),
     items
   };
@@ -143,7 +175,7 @@ async function savePayload(payload){
     const {error: itemError} = await supabaseClient.from('inspection_items').insert(rows);
     if(itemError) throw itemError;
   } else {
-    const records = JSON.parse(localStorage.getItem('logfer_inspections') || '[]');
+    const records = loadLocalRecords();
     records.unshift(payload);
     localStorage.setItem('logfer_inspections', JSON.stringify(records));
   }
@@ -152,19 +184,61 @@ async function savePayload(payload){
 function loadLocalRecords(){
   return JSON.parse(localStorage.getItem('logfer_inspections') || '[]');
 }
+function saveLocalRecords(records){ localStorage.setItem('logfer_inspections', JSON.stringify(records)); }
 
 function renderManager(){
   const records = loadLocalRecords();
   $('kpiTotal').textContent = records.length;
   $('kpiApproved').textContent = records.filter(r => r.status === 'Aprovado').length;
   $('kpiRejected').textContent = records.filter(r => r.status !== 'Aprovado').length;
-  $('records').innerHTML = records.map(r => `
-    <div class="record">
-      <strong>${r.plate} - ${r.driver_name}</strong><br />
-      <span>${r.inspection_date} ${r.inspection_time || ''}</span><br />
-      <span class="badge ${r.status === 'Aprovado' ? 'approved':'rejected'}">${r.status}</span>
-      <p>${r.driver_report || 'Sem relato do motorista.'}</p>
-    </div>`).join('') || '<p class="muted">Nenhuma inspeção registrada neste aparelho.</p>';
+  $('kpiCritical').textContent = records.filter(r => r.status.includes('crítico')).length;
+  $('records').innerHTML = records.map((r, idx) => {
+    const non = (r.items || []).filter(i => i.answer === 'Não conforme');
+    return `<div class="record">
+      <div class="record-head"><strong>${r.plate} - ${r.driver_name}</strong><span class="badge ${r.status === 'Aprovado' ? 'approved':'rejected'}">${r.status}</span></div>
+      <span>${r.inspection_date || ''} ${r.inspection_time || ''} | Odômetro: ${r.odometer || '-'} | ${r.vehicle_type || '-'}</span>
+      <p><strong>Protocolo:</strong> ${r.protocol}</p>
+      <p><strong>Não conformidades:</strong> ${non.length ? non.map(i => `${i.item_id} (${i.severity})`).join(', ') : 'Nenhuma'}</p>
+      <p><strong>Relato:</strong> ${r.driver_report || 'Sem relato do motorista.'}</p>
+      <label>Status do gestor
+        <select data-idx="${idx}" class="manager-status">
+          ${['Aguardando análise','Liberado','Bloqueado para manutenção','Liberado com ressalva','Encerrado'].map(s => `<option ${r.manager_status===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+      </label>
+      <label>Medida corretiva / decisão do gestor
+        <textarea data-idx="${idx}" class="manager-action" rows="3">${r.manager_action || ''}</textarea>
+      </label>
+      <label>Data de liberação
+        <input data-idx="${idx}" class="release-date" type="date" value="${r.release_date || ''}" />
+      </label>
+      <button class="secondary save-manager" data-idx="${idx}">Salvar análise</button>
+    </div>`;
+  }).join('') || '<p class="muted">Nenhuma inspeção registrada neste aparelho.</p>';
+
+  document.querySelectorAll('.save-manager').forEach(btn => btn.addEventListener('click', (e) => {
+    const idx = Number(e.target.dataset.idx);
+    const records = loadLocalRecords();
+    records[idx].manager_status = document.querySelector(`.manager-status[data-idx="${idx}"]`).value;
+    records[idx].manager_action = document.querySelector(`.manager-action[data-idx="${idx}"]`).value;
+    records[idx].release_date = document.querySelector(`.release-date[data-idx="${idx}"]`).value;
+    saveLocalRecords(records);
+    alert('Análise do gestor salva neste aparelho.');
+    renderManager();
+  }));
+}
+
+function exportCsv(){
+  const records = loadLocalRecords();
+  const header = ['protocolo','data','hora','placa','motorista','cnh','odometro','tipo','rota','status','status_gestor','nao_conformidades','relato','medida_corretiva','data_liberacao'];
+  const rows = records.map(r => [
+    r.protocol, r.inspection_date, r.inspection_time, r.plate, r.driver_name, r.driver_cnh, r.odometer, r.vehicle_type, r.route, r.status, r.manager_status,
+    (r.items||[]).filter(i=>i.answer==='Não conforme').map(i=>`${i.item_id}-${i.severity}`).join(' | '),
+    r.driver_report, r.manager_action, r.release_date
+  ]);
+  const csv = [header, ...rows].map(row => row.map(v => `"${String(v||'').replaceAll('"','""')}"`).join(';')).join('\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = 'inspecoes-logfer.csv'; a.click(); URL.revokeObjectURL(url);
 }
 
 function setupSignature(){
@@ -203,7 +277,10 @@ $('submitInspection').onclick = async () => {
 };
 $('newInspection').onclick = () => location.reload();
 $('openManager').onclick = () => { renderManager(); show('managerCard'); };
-$('backHome').onclick = () => show('successCard');
+$('openManagerHome').onclick = () => { renderManager(); show('managerCard'); };
+$('backHome').onclick = () => show('loginCard');
+$('exportCsv').onclick = exportCsv;
+$('clearLocal').onclick = () => { if(confirm('Apagar todas as inspeções de teste salvas neste aparelho?')){ localStorage.removeItem('logfer_inspections'); renderManager(); } };
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault(); deferredPrompt = e; $('btnInstall').classList.remove('hidden');

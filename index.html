@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#f97316" />
-  <title>Logfer | Inspeção de Caminhões</title>
+  <title>Logfer | Inspeção Semanal de Caminhões</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="stylesheet" href="styles.css" />
 </head>
@@ -20,14 +20,17 @@
   <main class="container">
     <section class="card" id="loginCard">
       <h1>Acesso do motorista</h1>
-      <p class="muted">MVP inicial: acesso local. Depois conectamos ao Supabase com login real.</p>
+      <p class="muted">Versão 2: inspeção digital baseada na ficha final da Logfer. Nesta etapa os dados ainda ficam salvos no próprio aparelho. Depois conectamos ao Supabase.</p>
       <label>Nome do motorista
-        <input id="driverName" placeholder="Ex.: João da Silva" />
+        <input id="driverName" placeholder="Ex.: João da Silva" autocomplete="name" />
       </label>
       <label>CNH do motorista
         <input id="driverCnh" placeholder="Somente números" inputmode="numeric" />
       </label>
-      <button id="startBtn">Iniciar inspeção</button>
+      <div class="actions left">
+        <button id="startBtn">Iniciar inspeção</button>
+        <button id="openManagerHome" class="secondary">Painel do gestor</button>
+      </div>
     </section>
 
     <section class="card hidden" id="inspectionCard">
@@ -59,13 +62,16 @@
             <option>Veículo leve</option>
           </select>
         </label>
+        <label>Viagem/rota prevista
+          <input id="route" placeholder="Ex.: Curitiba > Londrina" />
+        </label>
       </div>
 
       <h2>Itens a inspecionar</h2>
-      <p class="muted">Quando marcar “Não conforme”, a observação e foto serão exigidas nos itens críticos.</p>
+      <p class="muted">Quando marcar “Não conforme”, a observação será obrigatória. Em itens críticos, a foto também será obrigatória.</p>
       <div id="checklist"></div>
 
-      <h2>Resultado geral</h2>
+      <h2>Resultado geral / verso da ficha</h2>
       <label>O caminhão necessita melhoria, reparo, manutenção, equipamento ou vistoria?
         <select id="needsRepair">
           <option value="Não">Não</option>
@@ -73,7 +79,7 @@
         </select>
       </label>
       <label>Relato do motorista
-        <textarea id="driverReport" rows="4" placeholder="Descreva a necessidade, defeito ou observação relevante."></textarea>
+        <textarea id="driverReport" rows="5" placeholder="Descreva a necessidade, defeito ou observação relevante."></textarea>
       </label>
 
       <h2>Assinatura do motorista</h2>
@@ -102,6 +108,11 @@
         <div><strong id="kpiTotal">0</strong><span>Total</span></div>
         <div><strong id="kpiApproved">0</strong><span>Aprovadas</span></div>
         <div><strong id="kpiRejected">0</strong><span>Com pendência</span></div>
+        <div><strong id="kpiCritical">0</strong><span>Críticas</span></div>
+      </div>
+      <div class="actions left">
+        <button id="exportCsv" class="secondary">Exportar CSV</button>
+        <button id="clearLocal" class="danger">Limpar teste local</button>
       </div>
       <div id="records"></div>
     </section>
