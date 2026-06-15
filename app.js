@@ -26,10 +26,18 @@ let answers = {};
 let deferredPrompt = null;
 let supabaseClient = null;
 
-function initSupabase(){
+async function initSupabase(){
   const cfg = window.LOGFER_CONFIG || {};
+
   if(cfg.SUPABASE_URL && cfg.SUPABASE_ANON_KEY && window.supabase){
-    supabaseClient = window.supabase.createClient(cfg.SUPABASE_URL, cfg.SUPABASE_ANON_KEY);
+
+    supabaseClient = window.supabase.createClient(
+      cfg.SUPABASE_URL,
+      cfg.SUPABASE_ANON_KEY
+    );
+
+    await carregarMotoristas();
+    await carregarVeiculos();
   }
 }
 
