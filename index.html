@@ -46,18 +46,13 @@
         <label>Odômetro de hoje
           <input id="odometer" type="number" placeholder="Ex.: 125000" />
         </label>
-        <label>Placa do veículo
-          <input id="plate" placeholder="Ex.: ABC1D23" />
+        <label>Veículo
+          <select id="plate">
+            <option value="">Carregando veículos...</option>
+          </select>
         </label>
         <label>Tipo do veículo
-          <select id="vehicleType">
-            <option value="">Selecione</option>
-            <option>Van/Furgão</option>
-            <option>Baú</option>
-            <option>Sider</option>
-            <option>Carroceria</option>
-            <option>Veículo leve</option>
-          </select>
+          <input id="vehicleType" placeholder="Tipo será preenchido automaticamente" readonly />
         </label>
         <label>Viagem/rota prevista
           <input id="route" placeholder="Ex.: Curitiba > Londrina" />
